@@ -26,9 +26,13 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "app_server" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  instance_type = "t3.small"
   key_name      = "IaC"
   tags = {
-    Name = "testeInstanciaTerraform"
+    Name = "terraform ansible python"
   }
+}
+
+output "public_ip" {
+  value = aws_instance.app_server.public_ip
 }
