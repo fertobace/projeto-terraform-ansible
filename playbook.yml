@@ -1,10 +1,35 @@
 - hosts: terraform-ansible
-  become: True
+  become: true
   tasks:
-    - name: Instalar Python3 e virtualenv
+    - name: Instalar Python3 e pip
       apt:
         pkg:
           - python3
           - python3-venv
           - python3-pip
         update_cache: yes
+
+    - name: Criar diretório do projeto
+      file:
+        path: /home/ubuntu/projeto
+        state: directory
+
+    - name: Criar ambiente virtual com venv
+      command: python3 -m venv /home/ubuntu/projeto/venv
+
+    - name: Instalar dependências dentro do venv
+      pip:
+        virtualenv: /home/ubuntu/projeto/venv
+        name:
+          - django
+          - djangorestframework
+
+    - name: Iniciando o Projeto
+      shell: ". /home/ubuntu/projeto/venv/bin/activate; django-admin startproject setup /home/ubuntu/projeto/"
+
+    - name: Alterando o host do settings
+      lineinfile: 
+        path: /home/ubuntu/projeto/setup/settings.py
+        regexp: 'ALLOWED_HOSTS'
+        line: 'ALLOWED_HOSTS = ["*"]'
+        backrefs: yes 
